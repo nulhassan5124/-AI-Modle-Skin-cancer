@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import joblib
 from PIL import Image
 
 st.set_page_config(page_title="SkinCare AI - Skin Cancer Detection", page_icon="🩺", layout="wide")
@@ -42,15 +41,7 @@ h1,h2,h3 { font-family: 'Playfair Display', serif !important; }
 </style>
 """, unsafe_allow_html=True)
 
-@st.cache_resource
-def load_model():
-    try:
-        return joblib.load('skin_cancer_model.joblib')
-    except:
-        return None
-model = load_model()
-
-# 1. TOP - CIRCLE MEIN SKIN CANCER LOGO - PROFESSIONAL
+# 1. TOP - PROFESSIONAL LOGO CIRCLE
 st.markdown("""
 <div style="text-align:center; margin-top:20px;">
     <div class="logo-circle">
@@ -66,13 +57,13 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 2. INTRODUCTION - SKIN CANCER
+# 2. INTRODUCTION
 st.markdown("""
 <div class="info-card" style="text-align:center; margin-top:20px;">
     <h3 style="margin:0; color:#0E5A8A;">Introduction - What is Skin Cancer?</h3>
     <p style="color:#555; font-size:14.5px; line-height:1.9; max-width:800px; margin:14px auto 0 auto;">
         <b>Skin Cancer</b> duniya mein sab se aam cancers mein se ek hai. Ye tab hota hai jab skin ke cells abnormal tareeqe se barhne lagte hain, aksar <b>Sun ki UV Rays</b> ki wajah se.<br><br>
-        Agar isko <b>Shuru mein pakar liya jaye</b> to 99% cases mein iska ilaaj mumkin hai. Isi liye <b>SkinCare AI</b> banaya gaya hai - Aap apni skin ki tasveer ya symptoms daalo, AI batayega ke <b>Risk High hai ya Low hai</b> aur aapko doctor se kab milna chahiye.
+        Agar isko <b>Shuru mein pakar liya jaye</b> to 99% cases mein iska ilaaj mumkin hai. Isi liye <b>SkinCare AI</b> banaya gaya hai - Aap apni skin ke symptoms daalo, AI batayega ke <b>Risk High hai ya Low hai</b> aur aapko doctor se kab milna chahiye.
     </p>
     <div style="display:flex; justify-content:center; gap:12px; margin-top:18px; flex-wrap:wrap;">
         <span style="background:#EFF6FF; border:1px solid #BFDBFE; padding:8px 16px; border-radius:20px; font-size:11px; font-weight:700;">🩺 EARLY DETECTION 99% CURABLE</span>
@@ -82,14 +73,13 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# WARNING
 st.markdown("""
 <div class="warning-box" style="margin-top:16px; text-align:center;">
     <b>⚠️ Important Note:</b> Ye website sirf <b>Education aur Early Screening</b> ke liye hai. Ye Doctor ka mutabadil nahi hai. Agar aapko koi nishani nazar aaye to foran Dermatologist se rabta karein.
 </div>
 """, unsafe_allow_html=True)
 
-# 3. VIEW TYPES - MENU KI JAGAH
+# 3. TYPES
 st.markdown("<div style='height:22px;'></div>", unsafe_allow_html=True)
 st.markdown("<h2 style='font-size:28px; text-align:center;'>🔍 Types of Skin Cancer</h2>", unsafe_allow_html=True)
 if st.button("☰ VIEW TYPES", use_container_width=True):
@@ -117,7 +107,7 @@ if st.session_state.menu_open:
                 st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
 
-# 4. ABCDE RULE + CHECK PROCEDURE
+# 4. ABCDE + PROCEDURE - AB BINA MODEL KE CHALEGA
 st.markdown(f"<h2 style='margin-top:22px;'>Selected: <span style='color:#0E5A8A; font-style:italic;'>{st.session_state.selected}</span></h2>", unsafe_allow_html=True)
 st.markdown("""
 <div class="info-card">
@@ -140,7 +130,7 @@ with c1:
     evolving = st.selectbox("Kya Ye Badal Raha Hai?", ["Nahi", "Haan, Thora", "Haan, Tezi Se"])
     itching = st.selectbox("Kharish / Khoon Aata Hai?", ["Nahi", "Kabhi Kabhi", "Haan"])
     sun_exposure = st.selectbox("Dhoop Mein Zyada Rehte Ho?", ["Kam", "Medium", "Bohat Zyada"])
-    score = int(asymmetry*8 + border*8 + color_var*10 + diameter*2 + (20 if evolving=="Haan, Tezi Se" else 10 if evolving=="Haan, Thora" else 0))
+    score = int(asymmetry*8 + border*8 + color_var*10 + diameter*2 + (20 if evolving=="Haan, Tezi Se" else 10 if evolving=="Haan, Thora" else 0) + (10 if itching=="Haan" else 5 if itching=="Kabhi Kabhi" else 0))
     st.metric("Risk Score", f"{score} / 200", f"Selected: {st.session_state.selected}")
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -153,13 +143,11 @@ with c2:
     with n3: st.markdown(f"<div class='nutri-item'><b>{color_var}</b><span>COLORS</span></div>", unsafe_allow_html=True)
     with n4: st.markdown(f"<div class='nutri-item'><b>{diameter}mm</b><span>SIZE</span></div>", unsafe_allow_html=True)
     st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
-
     st.markdown("<b style='color:white;'>📸 Upload Skin Image (Optional)</b>", unsafe_allow_html=True)
     uploaded = st.file_uploader("Apni skin ki tasveer upload karein", type=["jpg","png","jpeg"])
     if uploaded:
         img = Image.open(uploaded)
         st.image(img, width=200, caption="Uploaded Image")
-
     if st.button("✨ Predict - Risk Check Karein", use_container_width=True):
         if score < 60:
             st.success(f"🟢 LOW RISK - Score {score} - Pareshan hone ki zaroorat nahi, lekin har 3 mahine baad check karein.")
@@ -167,11 +155,8 @@ with c2:
             st.warning(f"🟡 MEDIUM RISK - Score {score} - Dermatologist se 2 hafte ke andar check karwayein.")
         else:
             st.error(f"🔴 HIGH RISK - Score {score} - Foran Doctor se milen! Ye Melanoma jaisa ho sakta hai.")
-        if model:
-            st.info("AI Model ne bhi analysis complete kar liya hai.")
     st.markdown("</div>", unsafe_allow_html=True)
 
-# 5. PREVENTION
 st.markdown("""
 <div class="info-card" style="margin-top:20px;">
     <h3 style="margin:0 0 12px 0; color:#0B3D5F;">🛡️ Prevention Tips</h3>
@@ -181,7 +166,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 6. DEVELOPED BY
 st.markdown("""
 <div style="background:#111; color:white; padding:36px 20px; border-radius:20px; margin-top:32px; text-align:center;">
     <div style="font-size:10px; letter-spacing:4px; color:#00B4A0; font-weight:800;">DEVELOPED & DEPLOYED BY</div>
