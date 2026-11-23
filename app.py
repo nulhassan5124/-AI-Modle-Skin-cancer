@@ -4,17 +4,45 @@ import torch.nn as nn
 from PIL import Image
 import torchvision.transforms as transforms
 
-# ============ PAGE SETUP ============
+# ============ ULTRA PRO PAGE SETUP ============
 st.set_page_config(page_title="DermaScan AI Pro", page_icon="🔬", layout="wide", initial_sidebar_state="expanded")
 
+# CUSTOM CSS - Is se hi sara look pro lagega
 st.markdown("""
 <style>
-    .main { background-color: #F2F6FC; }
-    .title { font-size: 38px; font-weight: 800; color: #0A3D62; margin-bottom: 0px; }
-    .subtitle { font-size: 15px; color: #555; margin-top: 0px; }
-    .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-    .disclaimer { background: #FFF8E1; border-left: 5px solid #FFB300; padding: 12px; border-radius: 8px; font-size: 13px; }
-    .footer { text-align:center; color:grey; font-size:13px; margin-top:30px; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    
+    /* Header Gradient */
+    .header-box {
+        background: linear-gradient(135deg, #0A3D62 0%, #0F6CA3 100%);
+        padding: 30px 35px;
+        border-radius: 20px;
+        color: white;
+        margin-bottom: 25px;
+    }
+    .header-box h1 { color: white; margin:0; font-size:42px; font-weight:800; }
+    .header-box p { color: #D6EAF8; margin:5px 0 0 0; font-size:16px; }
+    
+    /* Cards */
+    .pro-card {
+        background: white;
+        padding: 25px;
+        border-radius: 18px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+        border: 1px solid #EEF2F7;
+        height: 100%;
+    }
+    
+    /* Upload Button */
+    .stFileUploader > div { border-radius: 15px; border: 2px dashed #0F6CA3; background: #F8FBFF; }
+    
+    .risk-high { background: #FDEDEC; color: #CB4335; padding: 8px 15px; border-radius: 20px; font-weight: 600; }
+    .risk-low { background: #EAFAF1; color: #27AE60; padding: 8px 15px; border-radius: 20px; font-weight: 600; }
+    .risk-med { background: #FEF9E7; color: #B7950B; padding: 8px 15px; border-radius: 20px; font-weight: 600; }
+    
+    .disclaimer { background: #FFF8E1; border-left: 6px solid #FFC107; padding: 15px; border-radius: 10px; font-size: 13px; margin-top:15px;}
+    .footer { text-align:center; color:#95A5A6; font-size:13px; margin-top:40px; padding-top:20px; border-top:1px solid #eee; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -48,65 +76,70 @@ try:
     model_loaded = True
 except Exception as e:
     model_loaded = False
-    st.error(f"Model Error: {e}. Check model.pth is in same folder.")
+    st.error(f"Model Error: {e}")
 
-# ============ CLASSES INFO ============
 class_info = {
     'akiec': ("Actinic Keratoses", "Pre-Cancerous", "Medium"),
     'bcc': ("Basal Cell Carcinoma", "Skin Cancer", "High"),
-    'bkl': ("Benign Keratosis", "Benign - Non Cancerous", "Low"),
+    'bkl': ("Benign Keratosis", "Benign", "Low"),
     'df': ("Dermatofibroma", "Benign", "Low"),
-    'mel': ("Melanoma", "Serious Skin Cancer", "Very High"),
+    'mel': ("Melanoma", "Serious", "Very High"),
     'nv': ("Melanocytic Nevi (Mole)", "Benign Mole", "Low"),
     'vasc': ("Vascular Lesion", "Benign", "Low")
 }
 classes = list(class_info.keys())
 
-# ============ SIDEBAR ============
+# ============ SIDEBAR PRO ============
 with st.sidebar:
     st.markdown("## 🔬 **DermaScan AI**")
-    st.markdown("**Version:** Pro 2.0")
-    st.markdown("**Model:** Lightweight CNN")
-    st.markdown("**Dataset:** HAM10000 (10,015 Images)")
-    st.markdown("**Framework:** PyTorch")
+    st.markdown("<span style='background:#0F6CA3;color:white;padding:4px 10px;border-radius:12px;font-size:12px;'>PRO v3.0</span>", unsafe_allow_html=True)
+    st.write("")
+    st.markdown("**Model:** Lightweight CNN (PyTorch)")
+    st.markdown("**Dataset:** HAM10000 - 10,015 Images")
+    st.markdown("**Input:** 128x128 RGB")
     st.divider()
-    st.markdown("### 📋 Detects 7 Types")
-    for k, v in class_info.items():
-        st.write(f"• {v[0]}")
+    st.markdown("### 🎯 Accuracy Metrics")
+    st.metric("Model Type", "CNN", "Custom Trained")
+    st.metric("Classes", "7 Types")
+    st.metric("Status", "Active", "Ready")
     st.divider()
-    st.markdown("### 👨‍💻 Developer")
-    st.write("**NulHassan**")
-    st.write("AI Healthcare Developer")
-    st.write("Lahore, Pakistan")
-    if st.button("🔄 Reset App"):
-        st.rerun()
+    st.caption("Developed by NulHassan\nLahore, Pakistan")
 
 # ============ HEADER ============
-st.markdown('<p class="title">🔬 DermaScan AI Pro</p>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">AI-Powered Early Screening System for Skin Lesions | For Research & Screening Purpose Only</p>', unsafe_allow_html=True)
-st.divider()
+st.markdown("""
+<div class="header-box">
+    <h1>🔬 DermaScan AI Pro</h1>
+    <p>AI-Powered Early Screening System for Skin Lesions | Research & Educational Purpose Only | Built with PyTorch</p>
+</div>
+""", unsafe_allow_html=True)
 
-# ============ MAIN ============
-col1, col2 = st.columns([1, 1.25])
+# ============ MAIN 2 COLUMNS ============
+col1, col2 = st.columns([1, 1.3], gap="large")
 
 with col1:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("📤 1. Upload Lesion Image")
-    st.write("Clear, close-up photo upload karen. Blurry photo ka result accurate nahi hoga.")
-    uploaded_file = st.file_uploader("Choose JPG / PNG / JPEG", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+    st.markdown('<div class="pro-card">', unsafe_allow_html=True)
+    st.markdown("### 📤 Upload Lesion Image")
+    st.write("High quality, close-up image upload karen. Blurry image se accuracy kam hogi.")
+    uploaded_file = st.file_uploader("Upload JPG, PNG", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+    
     if uploaded_file:
         image = Image.open(uploaded_file).convert('RGB')
-        st.image(image, caption="Uploaded Image - Preview", use_container_width=True)
-        st.caption(f"File: {uploaded_file.name} | Size: {image.size}")
+        st.image(image, use_container_width=True)
+        st.success(f"✅ Image Loaded: {uploaded_file.name}")
     else:
-        st.info("👆 Image upload karen, result right side me aayega.")
+        st.markdown("""
+        <div style='border:2px dashed #AED6F1; border-radius:15px; padding:40px; text-align:center; background:#F8FBFF;'>
+            <h3>🖼️ No Image Selected</h3>
+            <p style='color:grey;'>Yahan aap ki image ka preview aayega</p>
+        </div>
+        """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
     if uploaded_file is not None and model_loaded:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("📊 2. AI Analysis Report")
-        with st.spinner("AI Model Analyzing... Please Wait"):
+        st.markdown('<div class="pro-card">', unsafe_allow_html=True)
+        st.markdown("### 📊 AI Analysis Report")
+        with st.spinner("🔬 AI Model Analyzing - Please wait 3 sec..."):
             transform = transforms.Compose([transforms.Resize((128, 128)), transforms.ToTensor()])
             img_tensor = transform(image).unsqueeze(0)
             with torch.no_grad():
@@ -118,58 +151,60 @@ with col2:
         full_name, category, risk = class_info[pred]
         conf = top_probs[0].item()*100
 
+        # Risk Badge
         if risk in ["High", "Very High"]:
-            st.error(f"**Prediction: {full_name}**")
+            badge = f"<span class='risk-high'>🔴 Risk: {risk}</span>"
         elif risk == "Medium":
-            st.warning(f"**Prediction: {full_name}**")
+            badge = f"<span class='risk-med'>🟡 Risk: {risk}</span>"
         else:
-            st.success(f"**Prediction: {full_name}**")
+            badge = f"<span class='risk-low'>🟢 Risk: {risk}</span>"
 
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Confidence", f"{conf:.2f}%")
-        c2.metric("Category", category)
-        c3.metric("Risk Level", risk)
+        st.markdown(f"#### Prediction: {full_name} {badge}", unsafe_allow_html=True)
+        st.write("")
+        
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Confidence", f"{conf:.2f}%")
+        m2.metric("Category", category)
+        m3.metric("Class Code", pred.upper())
 
-        st.write("**Confidence Meter**")
+        st.write("**Confidence Level**")
         st.progress(int(conf))
 
-        st.write("**Top 3 Predictions**")
+        st.divider()
+        st.markdown("**Top 3 Predictions (AI Ranking)**")
         for i in range(3):
             cc = classes[top_idx[i]]
             pp = top_probs[i].item()*100
-            st.write(f"{class_info[cc][0]} — {pp:.1f}%")
+            name = class_info[cc][0]
+            st.write(f"**{i+1}. {name}** — {pp:.1f}%")
             st.progress(int(pp))
 
-        report = f"""DermaScan AI Pro - Screening Report
-
-Prediction: {full_name}
-Category: {category}
-Risk Level: {risk}
-Confidence: {conf:.2f}%
-
-Top 3:
-1. {class_info[classes[top_idx[0]]][0]} - {top_probs[0].item()*100:.2f}%
-2. {class_info[classes[top_idx[1]]][0]} - {top_probs[1].item()*100:.2f}%
-3. {class_info[classes[top_idx[2]]][0]} - {top_probs[2].item()*100:.2f}%
-
-Disclaimer: This is AI screening only, not a medical diagnosis. Consult dermatologist.
-"""
-        st.download_button("📄 Download Full Report", data=report, file_name="DermaScan_Report.txt", use_container_width=True)
-        st.markdown(f"<div class='disclaimer'>⚠️ <b>Important Disclaimer:</b> Ye result AI prediction hai, final diagnosis nahi hai. Confirm karne ke liye qualified dermatologist se zaroor rabta karen.</div>", unsafe_allow_html=True)
+        # Download
+        report = f"DermaScan AI Pro Report\nPrediction: {full_name}\nRisk: {risk}\nConfidence: {conf:.2f}%\nDisclaimer: Screening only, not diagnosis."
+        st.write("")
+        st.download_button("📄 Download Professional Report (TXT)", data=report, file_name="DermaScan_Pro_Report.txt", use_container_width=True, type="primary")
+        
+        st.markdown("<div class='disclaimer'>⚠️ <b>Disclaimer:</b> This tool is for educational & early screening only. It is NOT a medical diagnosis. Final confirmation ke liye Dermatologist se zaroor consult karen.</div>", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
+        
     else:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("ℹ️ How It Works")
-        st.write("""
-        **Step 1:** Skin lesion ki clear photo upload karen  
-        **Step 2:** Lightweight CNN (PyTorch) image ko 128x128 me analyze karta hai  
-        **Step 3:** 3 second me Top 3 predictions + Risk Level + Report mil jata hai
+        st.markdown('<div class="pro-card">', unsafe_allow_html=True)
+        st.markdown("### ℹ️ How It Works")
+        st.markdown("""
+        **Step 1:** Lesion ki clear photo upload karen  
+        **Step 2:** Lightweight CNN model (PyTorch) 128x128 pe analyze karta hai  
+        **Step 3:** 3 second me Report + Risk + Confidence mil jata hai
+        
+        ---
+        #### Why DermaScan Pro?
+        ✅ **Fast:** Lab ka wait khatam, second me result  
+        ✅ **Affordable:** Ghar baithe early screening  
+        ✅ **Complete:** 7 Types (HAM10000 Dataset)  
+        ✅ **Private:** Image server pe save nahi hoti
+        
+        ---
+        **Built for Clinics & Researchers in Pakistan**
         """)
-        st.divider()
-        st.write("**Why DermaScan?**")
-        st.write("✅ Fast - No waiting for lab")
-        st.write("✅ Low Cost - Early screening at home")
-        st.write("✅ 7 Classes - Complete HAM10000 coverage")
         st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<p class="footer">© 2026 DermaScan AI Pro | Developed by NulHassan | Lahore, Pakistan | v2.0</p>', unsafe_allow_html=True)
+st.markdown("<div class='footer'>© 2026 DermaScan AI Pro v3.0 | Developed by NulHassan | Lahore, Pakistan | For Research Purpose Only</div>", unsafe_allow_html=True)
